@@ -9,6 +9,9 @@ const fccTestingRoutes  = require('./routes/fcctesting.js');
 const runner            = require('./test-runner');
 
 const helment = require('helmet');
+const {connectDB} = require('./config/db');
+
+connectDB();
 
 const app = express();
 
