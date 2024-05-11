@@ -2,9 +2,9 @@ const { ThreadModel } = require('../model/thread-schema');
 
 module.exports = class ThreadDAO {
 
-    async createThread(text, delete_password) {
+    async createThread(board, text, delete_password) {
         try {
-            const newThread = ThreadModel({ text, delete_password });
+            const newThread = ThreadModel({ board, text, delete_password });
             return await newThread.save();
         }
         catch (err) {
@@ -21,9 +21,10 @@ module.exports = class ThreadDAO {
         }
     }
 
-    async getThreadByTextAndDeletepassword(text, delete_password) {
+    async getThreadByBoardTextAndDeletepassword(board, text, delete_password) {
         try {
             const result = await ThreadModel.findOne({
+                board,
                 text, delete_password
             }).exec();
             return result;
@@ -32,6 +33,19 @@ module.exports = class ThreadDAO {
             console.error(`Error in ThreadDAO getThreadByTextAndDeletepassword: ${err}`);
         }
     }
+
+    async getThreadByBoardSortDescByBumpDate(board) {
+        try {
+            const result = await ThreadModel.find({ board })
+            .limit(10)
+            .sort({ bumped_on: -1 }).select('-reported -delete_password');
+            return result;
+        }
+        catch (err) {
+            console.error(`Error in ThreadDAO getThreadByTextAndDeletepassword: ${err}`);
+        }
+    }
+
 
     async updateThread(thread_id) {
         try {
@@ -42,12 +56,12 @@ module.exports = class ThreadDAO {
         }
     }
 
-    async deleteAllThreads(thread_id) {
+    async deleteAllThreadsByBoard(board) {
         try {
-            await ThreadModel.deleteMany({});
+            await ThreadModel.deleteMany({ board });
         }
         catch (err) {
-            console.error(`Error in ThreadDAO deleteAllThreads: ${err}`);
+            console.error(`Error in ThreadDAO deleteAllThreadsByBoard: ${err}`);
         }
     }
 }

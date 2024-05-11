@@ -16,14 +16,22 @@ const RepliesSchema = new mongoose.Schema({
 });
 
 const ThreadSchema = new mongoose.Schema(
-    {
-        created_on: {
-            type: mongoose.SchemaTypes.Date,
-            default: Date.now
+    {   
+        board: {
+            type: mongoose.SchemaTypes.String,
+            required:true,
         },
         text: {
             type: mongoose.SchemaTypes.String,
             required: true
+        },
+        delete_password: {
+            type: mongoose.SchemaTypes.String,
+            required: true
+        },
+        created_on: {
+            type: mongoose.SchemaTypes.Date,
+            default: Date.now
         },
         bumped_on: {
             type: mongoose.SchemaTypes.Date
@@ -32,10 +40,6 @@ const ThreadSchema = new mongoose.Schema(
         reported: {
             type: mongoose.SchemaTypes.Boolean,
             default:false
-        },
-        delete_password: {
-            type: mongoose.SchemaTypes.String,
-            required: true
         },
         replies: {
             type: [RepliesSchema],

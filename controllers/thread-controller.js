@@ -1,16 +1,27 @@
 const ThreadService = require('../service/thread-service');
 
-const threadService = new ThreadService(); 
+const threadService = new ThreadService();
 
-const createThread = async (req,res) => {
- const {text ,delete_password} = req.body;
-    const result = await threadService.createThread(text,delete_password);
-    if(result == true){
+const createThreadHandler = async (req, res) => {
+    const { text, delete_password } = req.body;
+    const board = req.params.board;
+    const result = await threadService.createThread(board,text, delete_password);
+    if (result == true) {
         res.status(200).send();
     }
     return res.status(500).send();;
 }
 
+const getThreadsHandler = async (req,res) => {
+    const board = req.params.board;
+    const result = await threadService.getMostRecentThreadsWithReplies(board);
+    if(result === undefined) {
+        return res.status(500).send();
+    }
+    return res.status(200).send(result);
+};
+
 module.exports = {
-    createThread
+     createThreadHandler,
+     getThreadsHandler
 }
