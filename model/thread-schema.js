@@ -12,14 +12,15 @@ const RepliesSchema = new mongoose.Schema({
         required: true
     }, reported: {
         type: mongoose.SchemaTypes.Boolean,
+        default: false
     },
 });
 
 const ThreadSchema = new mongoose.Schema(
-    {   
+    {
         board: {
             type: mongoose.SchemaTypes.String,
-            required:true,
+            required: true,
         },
         text: {
             type: mongoose.SchemaTypes.String,
@@ -39,7 +40,7 @@ const ThreadSchema = new mongoose.Schema(
         },
         reported: {
             type: mongoose.SchemaTypes.Boolean,
-            default:false
+            default: false
         },
         replies: {
             type: [RepliesSchema],

@@ -1,5 +1,6 @@
 'use strict';
 const threadController = require('../controllers/thread-controller');
+const repliesController = require('../controllers/replies-controller');
 
 module.exports = function (app) {
 
@@ -7,6 +8,8 @@ module.exports = function (app) {
     .get(threadController.getThreadsHandler)
     .post(threadController.createThreadHandler);
 
-  app.route('/api/replies/:board');
+  app.route('/api/replies/:board')
+    .get(threadController.getThreadsWithAllRepliesHandler)
+    .post(repliesController.createRepliesHandler);
 
 };
