@@ -4,13 +4,16 @@ const RepliesSchema = new mongoose.Schema({
     text: {
         type: mongoose.SchemaTypes.String,
         required: true
-    }, created_on: {
+    },
+    created_on: {
         type: mongoose.SchemaTypes.Date,
         default: Date.now
-    }, delete_password: {
+    },
+    delete_password: {
         type: mongoose.SchemaTypes.String,
         required: true
-    }, reported: {
+    },
+    reported: {
         type: mongoose.SchemaTypes.Boolean,
         default: false
     },
