@@ -5,9 +5,9 @@ module.exports = class ThreadService {
         this.threadDAO = new ThreadDAO();
     }
 
-    async createThread(board,text, delete_password) {
+    async createThread(board, text, delete_password) {
         try {
-            const result = await this.threadDAO.createThread(board,text, delete_password);
+            const result = await this.threadDAO.createThread(board, text, delete_password);
             if (result === undefined || result === null) {
                 return false;
             }
@@ -18,14 +18,18 @@ module.exports = class ThreadService {
         }
     }
 
-    async addReplietoThread(thread_id,text,delete_password){
+    async addReplietoThread(thread_id, text, delete_password) {
         try {
-            const result = await this.threadDAO.updateThreadById(thread_id,{
-                bumped_on:Date.now(),
-                $push : {replies: {
-                    text,
-                    delete_password,
-                }}
+            const currentDate = Date.now();
+            const result = await this.threadDAO.updateThreadById(thread_id, {
+                bumped_on: currentDate,
+                $push: {
+                    replies: {
+                        text,
+                        delete_password,
+                        created_on: currentDate
+                    }
+                }
             });
             if (result === undefined || result === null) {
                 return false;
@@ -37,23 +41,23 @@ module.exports = class ThreadService {
         }
     }
 
-    async getThreadWithRepliesBythreadId(thread_id){
+    async getThreadWithRepliesBythreadId(thread_id) {
         try {
-            const result = await this.threadDAO.getThreadByThreadIdWithoutPasswordAndReported(thread_id);
-           return result;
+            const result = await this.threadDAO.getOneThreadByThreadIdWithoutPasswordAndReported(thread_id);
+            return result;
         }
         catch (err) {
             console.error(`Error in ThreadService getThreadWithRepliesBythreadId: ${err}`);
         }
     }
 
-    async getMostRecentThreadsWithReplies(board){
+    async getMostRecentThreadsWithRecent3Replies(board) {
         try {
             const result = await this.threadDAO.getThreadByBoardSortDescByBumpDate(board);
             return result;
         }
         catch (err) {
-            console.error(`Error in ThreadService getMostRecentThreadsWithReplies: ${err}`);
-        } 
+            console.error(`Error in ThreadService getMostRecentThreadsWithRecent3Replies: ${err}`);
+        }
     }
 }

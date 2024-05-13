@@ -24,14 +24,14 @@ module.exports = class ThreadDAO {
         }
     }
 
-    async getThreadByThreadIdWithoutPasswordAndReported(thread_id) {
+    async getOneThreadByThreadIdWithoutPasswordAndReported(thread_id) {
         try {
             const result = await ThreadModel.findOne({ _id: thread_id })
                 .select('-delete_password -reported -replies.delete_password -replies.reported').exec();
             return result;
         }
         catch (err) {
-            console.error(`Error in ThreadDAO getThreadByThreadIdWithoutPasswordAndReported: ${err}`);
+            console.error(`Error in ThreadDAO getOneThreadByThreadIdWithoutPasswordAndReported: ${err}`);
         }
     }
 
@@ -39,7 +39,8 @@ module.exports = class ThreadDAO {
         try {
             const result = await ThreadModel.findOne({
                 board,
-                text, delete_password
+                text, 
+                delete_password
             }).exec();
             return result;
         }
@@ -49,22 +50,26 @@ module.exports = class ThreadDAO {
     }
 
     async getThreadByBoardSortDescByBumpDate(board) {
-        try {// FIXME : fix this method
-            const result = await ThreadModel.find({ board })
-                .sort({
-                    'replies.created_on':-1,
-                    bumped_on: -1,
-                })
-                .limit(10)
-                .populate({
-                    path: 'replies',
-                    sort: { 'replies.created_on': -11 },
-                    limit: {'replies':3}
-                })
-                .select('-reported -delete_password -replies.reported -replies.delete_password');
-            console.log(`DATA  = check : ${result}`);
-            console.log(`DATA.length: ${result.length}`);
-            
+        try {
+            const pipeline = [
+                { $match: { board } },
+                { $sort: { bumped_on: -1 } },
+                { $limit: 10 },
+                { $sort: { created_on: -1 } },
+                {
+                    $project: {
+                        text: 1,
+                        bumped_on: 1,
+                        created_on: 1,
+                        board: 1,
+                        replies: {
+                            $slice: ["$replies", 0, 3]
+                        }
+                    }
+                },
+                { $unset: ['replies.delete_password', 'replies.reported'] }
+            ];
+            const result = await ThreadModel.aggregate(pipeline);
             return result;
         }
         catch (err) {

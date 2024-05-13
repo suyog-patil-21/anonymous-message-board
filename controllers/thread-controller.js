@@ -15,7 +15,7 @@ const createThreadHandler = async (req, res) => {
 
 const getThreadsHandler = async (req, res) => {
     const board = req.params.board;
-    const result = await threadService.getMostRecentThreadsWithReplies(board);
+    const result = await threadService.getMostRecentThreadsWithRecent3Replies(board);
     if (result === undefined) {
         return res.status(500).send();
     }
