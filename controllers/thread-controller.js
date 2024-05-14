@@ -1,4 +1,4 @@
-const {request, response} = require('express');
+const { request, response } = require('express');
 const ThreadService = require('../service/thread-service');
 
 const threadService = new ThreadService();
@@ -31,8 +31,15 @@ const getThreadsWithAllRepliesHandler = async (req, res) => {
     return res.status(200).send(result);
 }
 
+const deleteThreadHandler = async (req, res) => {
+    const board = req.params.board;
+    const { thread_id, delete_password } = req.query;
+    // TODO : write code here
+}
+
 module.exports = {
     createThreadHandler,
     getThreadsHandler,
-    getThreadsWithAllRepliesHandler
+    getThreadsWithAllRepliesHandler,
+    deleteThreadHandler
 };
