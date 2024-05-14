@@ -35,15 +35,15 @@ suite('Functional Tests', function () {
         chai.expect(result['created_on']).to.be.an.instanceOf(Date);
         chai.expect(result['bumped_on']).to.be.an.instanceOf(Date);
         chai.expect(result['board']).to.equal(board);
-        chai.assert.isBoolean(result['reported']);
-        chai.assert.isArray(result['replies'])
+        assert.isBoolean(result['reported']);
+        assert.isArray(result['replies'])
     });
 
     test('Viewing the 10 most recent threads with 3 replies each: GET request to /api/threads/{board}', async function () {
         const response = await chai.request(server).get(`/api/threads/${board}`);
 
         chai.expect(response.statusCode).to.equal(200);
-        chai.assert.isArray(response.body);
+        assert.isArray(response.body);
         chai.expect(response.body).to.have.length.lessThan(11); // must contain only 10
         for (let i = 0; i < response.body.length; i++) {
             const element = response.body[i];
@@ -64,6 +64,19 @@ suite('Functional Tests', function () {
                 chai.expect(element['replies'][j]).to.not.have.property('reported');
             }
         }
+    });
+
+    test('Deleting a thread with the incorrect password: DELETE request to /api/threads/{board} with an invalid delete_password', async function () {
+        // TODO : start test here
+
+    });
+
+    test('Deleting a thread with the correct password: DELETE request to /api/threads/{board} with a valid delete_password', async function () {
+        // TODO : start test here
+    });
+
+    test('Reporting a thread: PUT request to /api/threads/{board}', async function () {
+        // TODO : start test here
     });
 
     test('Creating a new reply: POST request to /api/replies/{board}', async function () {
@@ -87,8 +100,8 @@ suite('Functional Tests', function () {
         chai.expect(result).to.have.property('replies');
         chai.expect(result['created_on']).to.be.an.instanceOf(Date);
         chai.expect(result['bumped_on']).to.be.an.instanceOf(Date);
-        chai.assert.isBoolean(result['reported']);
-        chai.assert.isArray(result['replies']);
+        assert.isBoolean(result['reported']);
+        assert.isArray(result['replies']);
         chai.expect(result['board']).to.equal(board);
         chai.expect(result['bumped_on']).to.be.greaterThan(result['created_on']);
         chai.expect(result['replies'][0]).to.have.property('_id');
@@ -97,7 +110,6 @@ suite('Functional Tests', function () {
         chai.expect(result['replies'][0]).to.have.property('delete_password');
         chai.expect(result['replies'][0]).to.have.property('reported');
     });
-
 
     test('Viewing a single thread with all replies: GET request to /api/replies/{board}', async function () {
         const oldThreatResult = await threadDAO.getThreadByBoardTextAndDeletepassword(board, threadText, delete_password);
@@ -115,7 +127,7 @@ suite('Functional Tests', function () {
         chai.expect(response.body).to.not.have.property('reported');
         chai.expect(response.body).to.not.have.property('delete_password');
         chai.expect(response.body).to.have.property('replies');
-        chai.assert.isArray(response.body['replies']);
+        assert.isArray(response.body['replies']);
         chai.expect(response.body['board']).to.equal(board);
         chai.expect(Date.parse(response.body['bumped_on'])).to.be.greaterThan(Date.parse(response.body['created_on']));
         for (const key in response.body['replies']) {
@@ -125,6 +137,17 @@ suite('Functional Tests', function () {
             chai.expect(response.body['replies'][key]).to.not.have.property('delete_password');
             chai.expect(response.body['replies'][key]).to.not.have.property('reported');
         }
+    });
 
+    test('Deleting a reply with the incorrect password: DELETE request to /api/replies/{board} with an invalid delete_password', async function () {
+        // TODO : start test here
+    });
+
+    test('Deleting a reply with the correct password: DELETE request to /api/replies/{board} with a valid delete_password', async function () {
+        // TODO : start test here
+    });
+
+    test('Reporting a reply: PUT request to /api/replies/{board}', async function () {
+        // TODO : start test here
     });
 });

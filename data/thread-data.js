@@ -90,7 +90,7 @@ module.exports = class ThreadDAO {
 
     async deleteAllThreadsByBoard(board) {
         try {
-            await ThreadModel.deleteMany({ board });
+            return await ThreadModel.deleteMany({ board });
         }
         catch (err) {
             console.error(`Error in ThreadDAO deleteAllThreadsByBoard: ${err}`);
