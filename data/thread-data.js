@@ -5,7 +5,8 @@ module.exports = class ThreadDAO {
     async createThread(board, text, delete_password) {
         try {
             const newThread = ThreadModel({ board, text, delete_password });
-            return await newThread.save();
+            const result = await newThread.save();
+            return result; 
         }
         catch (err) {
             console.error(`Error in ThreadDAO createThread: ${err}`);
@@ -21,6 +22,16 @@ module.exports = class ThreadDAO {
         }
         catch (err) {
             console.error(`Error in ThreadDAO getThreadByThreadId: ${err}`);
+        }
+    }
+    
+    async getOneThreadByThreadId(thread_id){
+        try {
+            const result = await ThreadModel.findOne({ _id: thread_id }).exec();
+            return result;
+        }
+        catch (err) {
+            console.error(`Error in ThreadDAO getOneThreadByThreadId: ${err}`);
         }
     }
 
@@ -90,10 +101,21 @@ module.exports = class ThreadDAO {
 
     async deleteAllThreadsByBoard(board) {
         try {
-            return await ThreadModel.deleteMany({ board });
+            const result = await ThreadModel.deleteMany({ board });
+            return result; 
         }
         catch (err) {
             console.error(`Error in ThreadDAO deleteAllThreadsByBoard: ${err}`);
+        }
+    }
+
+    async deleteThreadByThreadId(thread_id) {
+        try {
+            const result = await ThreadModel.deleteOne({ _id: thread_id });
+            return result 
+        }
+        catch (err) {
+            console.error(`Error in ThreadDAO deleteThreadByThreadId: ${err}`);
         }
     }
 }

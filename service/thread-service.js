@@ -41,10 +41,13 @@ module.exports = class ThreadService {
         }
     }
 
-    async getThreadWithRepliesBythreadId(thread_id) {
+    async getThreadWithRepliesBythreadId(thread_id, showPassword) {
         try {
-            const result = await this.threadDAO.getOneThreadByThreadIdWithoutPasswordAndReported(thread_id);
-            return result;
+            const sendPassword = showPassword || false;
+            if (sendPassword) {
+                return await this.threadDAO.getOneThreadByThreadId(thread_id);
+            }
+            return await this.threadDAO.getOneThreadByThreadIdWithoutPasswordAndReported(thread_id);
         }
         catch (err) {
             console.error(`Error in ThreadService getThreadWithRepliesBythreadId: ${err}`);
@@ -58,6 +61,16 @@ module.exports = class ThreadService {
         }
         catch (err) {
             console.error(`Error in ThreadService getMostRecentThreadsWithRecent3Replies: ${err}`);
+        }
+    }
+
+    async deleteThreadById(thread_id) {
+        try {
+            const result = await this.threadDAO.deleteThreadByThreadId(thread_id);
+            return result.acknowledged;
+        }
+        catch (err) {
+            console.error(`Error in ThreadService deleteThreadById: ${err}`);
         }
     }
 }

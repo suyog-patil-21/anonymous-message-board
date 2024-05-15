@@ -6,7 +6,8 @@ module.exports = function (app) {
 
   app.route('/api/threads/:board')
     .get(threadController.getThreadsHandler)
-    .post(threadController.createThreadHandler);
+    .post(threadController.createThreadHandler)
+    .delete(threadController.deleteThreadHandler);
 
   app.route('/api/replies/:board')
     .get(threadController.getThreadsWithAllRepliesHandler)

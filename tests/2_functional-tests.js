@@ -67,16 +67,34 @@ suite('Functional Tests', function () {
     });
 
     test('Deleting a thread with the incorrect password: DELETE request to /api/threads/{board} with an invalid delete_password', async function () {
-        // TODO : start test here
+    const createThreadDoc = await threadDAO.createThread(board, 'Delete with incorrect password test', delete_password);
+    const thread_id = createThreadDoc._id.toString();
 
+    const response = await chai.request(server).delete(`/api/threads/${board}`).send({
+        thread_id,
+        delete_password: 'incorrectPass'
+    });
+    chai.expect(response.statusCode).to.equal(200);
+    chai.expect(response.text).to.equal('incorrect password');
+
+    const checkThread = await threadDAO.getThreadByThreadId(thread_id);
+    chai.expect(checkThread._id.toString()).to.equal(thread_id);
     });
 
     test('Deleting a thread with the correct password: DELETE request to /api/threads/{board} with a valid delete_password', async function () {
-        // TODO : start test here
-    });
+        const createThreadDoc = await threadDAO.createThread(board, 'Delete with correct password test', delete_password);
+        const thread_id = createThreadDoc._id.toString();
 
-    test('Reporting a thread: PUT request to /api/threads/{board}', async function () {
-        // TODO : start test here
+        const response = await chai.request(server).delete(`/api/threads/${board}`).send({
+            thread_id,
+            delete_password
+        });
+
+        chai.expect(response.statusCode).to.equal(200);
+        chai.expect(response.text).to.equal('success');
+
+        const checkThread = await threadDAO.getThreadByThreadId(thread_id);
+        chai.expect(checkThread).to.equal(null);
     });
 
     test('Creating a new reply: POST request to /api/replies/{board}', async function () {
@@ -137,17 +155,5 @@ suite('Functional Tests', function () {
             chai.expect(response.body['replies'][key]).to.not.have.property('delete_password');
             chai.expect(response.body['replies'][key]).to.not.have.property('reported');
         }
-    });
-
-    test('Deleting a reply with the incorrect password: DELETE request to /api/replies/{board} with an invalid delete_password', async function () {
-        // TODO : start test here
-    });
-
-    test('Deleting a reply with the correct password: DELETE request to /api/replies/{board} with a valid delete_password', async function () {
-        // TODO : start test here
-    });
-
-    test('Reporting a reply: PUT request to /api/replies/{board}', async function () {
-        // TODO : start test here
     });
 });
