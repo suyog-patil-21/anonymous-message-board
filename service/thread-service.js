@@ -97,12 +97,30 @@ module.exports = class ThreadService {
                 {
                     "replies.$.reported": true
                 });
-                console.log(result);
             if (result === undefined || result == null || result.modifiedCount == 0) return false;
             return true;
         }
         catch (err) {
-            console.error(`Error in ThreadService deleteThreadById: ${err}`);
+            console.error(`Error in ThreadService reportThreadReplyByThreadIdAndReplyId: ${err}`);
+        }
+    }
+
+
+    async deleteThreadReplyByThreadIdAndReplyIdAndReplyPassword(thread_id, reply_id, reply_password) {
+        try {
+            const result = await this.threadDAO.updateThread(
+                {
+                    _id: thread_id,
+                    "replies._id": reply_id,
+                    "replies.delete_password": reply_password
+                },
+                {
+                    "replies.$.text": "[deleted]"
+                });
+          return result;
+        }
+        catch (err) {
+            console.error(`Error in ThreadService deleteThreadReplyByThreadIdAndReplyIdAndReplyPassword: ${err}`);
         }
     }
 }

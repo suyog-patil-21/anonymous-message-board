@@ -14,7 +14,15 @@ const createRepliesHandler = async (req, res) => {
 
 const deleteReplyHandler = async (req, res) => {
     const { thread_id, reply_id, delete_password } = req.body;
-    // TODO : write code for delete reply
+    const result = await threadService.deleteThreadReplyByThreadIdAndReplyIdAndReplyPassword(thread_id, reply_id, delete_password);
+    console.log(result);
+    if (result == null || result == undefined) {
+        return res.status(500).send();
+    }
+    if(result.modifiedCount == 1  && result.matchedCount == 1){
+        return res.status(200).send('success');
+    }
+    return res.status(200).send('incorrect password');
 }
 
 const reportThreadReplyHandler = async (req, res) => {
