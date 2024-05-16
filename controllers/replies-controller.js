@@ -19,7 +19,12 @@ const deleteReplyHandler = async (req, res) => {
 
 const reportThreadReplyHandler = async (req, res) => {
     const { thread_id, reply_id } = req.body;
-    // TODO : write code for report reply of the thread
+    const result = await threadService.reportThreadReplyByThreadIdAndReplyId(thread_id, reply_id);
+    console.log(result);
+    if (result != true) {
+        return res.status(500).send();
+    }
+    return res.status(200).send('reported');
 }
 
 module.exports = {

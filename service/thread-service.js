@@ -74,12 +74,32 @@ module.exports = class ThreadService {
         }
     }
 
-    async reportThreadById(thread_id){
+    async reportThreadById(thread_id) {
         try {
-            const result = await this.threadDAO.updateThreadById(thread_id,{
-                reported : true
+            const result = await this.threadDAO.updateThreadById(thread_id, {
+                reported: true
             })
             return result;
+        }
+        catch (err) {
+            console.error(`Error in ThreadService deleteThreadById: ${err}`);
+        }
+    }
+
+
+    async reportThreadReplyByThreadIdAndReplyId(thread_id, reply_id) {
+        try {
+            const result = await this.threadDAO.updateThread(
+                {
+                    _id: thread_id,
+                    "replies._id": reply_id
+                },
+                {
+                    "replies.$.reported": true
+                });
+                console.log(result);
+            if (result === undefined || result == null || result.modifiedCount == 0) return false;
+            return true;
         }
         catch (err) {
             console.error(`Error in ThreadService deleteThreadById: ${err}`);

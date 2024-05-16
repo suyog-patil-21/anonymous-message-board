@@ -95,6 +95,16 @@ module.exports = class ThreadDAO {
             return result;
         }
         catch (err) {
+            console.error(`Error in ThreadDAO updateThreadById: ${err}`);
+        }
+    }
+
+    async updateThread(filterObject, updateObject) {
+        try {
+            const result = await ThreadModel.updateOne(filterObject, updateObject);
+            return result;
+        }
+        catch (err) {
             console.error(`Error in ThreadDAO updateThread: ${err}`);
         }
     }
