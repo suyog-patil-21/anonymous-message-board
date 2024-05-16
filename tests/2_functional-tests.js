@@ -232,7 +232,7 @@ suite('Functional Tests', function () {
         chai.expect(checkThread.replies[0].text).to.equal('[deleted]');
     });
 
-    test('Reporting a reply: PUT request to /api/replies/{board', async function () {
+    test('Reporting a reply: PUT request to /api/replies/{board}', async function () {
         const sampleThread = {
             board,
             text: threadText,
