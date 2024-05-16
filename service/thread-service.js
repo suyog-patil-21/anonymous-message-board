@@ -41,9 +41,9 @@ module.exports = class ThreadService {
         }
     }
 
-    async getThreadWithRepliesBythreadId(thread_id, showPassword) {
+    async getThreadWithRepliesBythreadId(thread_id, showPasswordAndReported) {
         try {
-            const sendPassword = showPassword || false;
+            const sendPassword = showPasswordAndReported || false;
             if (sendPassword) {
                 return await this.threadDAO.getOneThreadByThreadId(thread_id);
             }
