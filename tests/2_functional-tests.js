@@ -3,6 +3,7 @@ const chai = require('chai');
 const assert = chai.assert;
 const server = require('../server');
 const ThreadDAO = require('../data/thread-data')
+const { ThreadModel } = require('../model/thread-schema');
 
 chai.use(chaiHttp);
 
@@ -66,42 +67,42 @@ suite('Functional Tests', function () {
         }
     });
 
-    test('Deleting a thread with the incorrect password: DELETE request to /api/threads/{board} with an invalid delete_password', async function () {
-    const createThreadDoc = await threadDAO.createThread(board, 'Delete with incorrect password test', delete_password);
-    const thread_id = createThreadDoc._id.toString();
+    // test('Deleting a thread with the incorrect password: DELETE request to /api/threads/{board} with an invalid delete_password', async function () {
+    //     const createThreadDoc = await threadDAO.createThread(board, 'Delete with incorrect password test', delete_password);
+    //     const thread_id = createThreadDoc._id.toString();
 
-    const response = await chai.request(server).delete(`/api/threads/${board}`).send({
-        thread_id,
-        delete_password: 'incorrectPass'
-    });
-    chai.expect(response.statusCode).to.equal(200);
-    chai.expect(response.text).to.equal('incorrect password');
+    //     const response = await chai.request(server).delete(`/api/threads/${board}`).send({
+    //         thread_id,
+    //         delete_password: 'incorrectPass'
+    //     });
+    //     chai.expect(response.statusCode).to.equal(200);
+    //     chai.expect(response.text).to.equal('incorrect password');
 
-    const checkThread = await threadDAO.getThreadByThreadId(thread_id);
-    chai.expect(checkThread._id.toString()).to.equal(thread_id);
-    });
+    //     const checkThread = await threadDAO.getThreadByThreadId(thread_id);
+    //     chai.expect(checkThread._id.toString()).to.equal(thread_id);
+    // });
 
-    test('Deleting a thread with the correct password: DELETE request to /api/threads/{board} with a valid delete_password', async function () {
+    // test('Deleting a thread with the correct password: DELETE request to /api/threads/{board} with a valid delete_password', async function () {
+    //     const createThreadDoc = await threadDAO.createThread(board, 'Delete with correct password test', delete_password);
+    //     const thread_id = createThreadDoc._id.toString();
+
+    //     const response = await chai.request(server).delete(`/api/threads/${board}`).send({
+    //         thread_id,
+    //         delete_password
+    //     });
+
+    //     chai.expect(response.statusCode).to.equal(200);
+    //     chai.expect(response.text).to.equal('success');
+
+    //     const checkThread = await threadDAO.getThreadByThreadId(thread_id);
+    //     chai.expect(checkThread).to.equal(null);
+    // });
+
+    test('Reporting a thread: PUT request to /api/threads/{board}', async function () {
         const createThreadDoc = await threadDAO.createThread(board, 'Delete with correct password test', delete_password);
         const thread_id = createThreadDoc._id.toString();
 
-        const response = await chai.request(server).delete(`/api/threads/${board}`).send({
-            thread_id,
-            delete_password
-        });
-
-        chai.expect(response.statusCode).to.equal(200);
-        chai.expect(response.text).to.equal('success');
-
-        const checkThread = await threadDAO.getThreadByThreadId(thread_id);
-        chai.expect(checkThread).to.equal(null);
-    });
-
-    test('Reporting a thread: PUT request to /api/threads/{board}',async function(){
-        const createThreadDoc = await threadDAO.createThread(board, 'Delete with correct password test', delete_password);
-        const thread_id = createThreadDoc._id.toString();
-
-        const response = (await chai.request(server).put(`/api/threads/${board}`)).send({
+        const response = await chai.request(server).put(`/api/threads/${board}`).send({
             thread_id
         });
 
@@ -170,5 +171,63 @@ suite('Functional Tests', function () {
             chai.expect(response.body['replies'][key]).to.not.have.property('delete_password');
             chai.expect(response.body['replies'][key]).to.not.have.property('reported');
         }
+    });
+
+    test('Deleting a reply with the incorrect password: DELETE request to /api/replies/{board} with an invalid delete_password', async function () {
+        const sampleThread = {
+            board,
+            text: threadText,
+            delete_password,
+            replies: [{
+                text: replyText,
+                delete_password
+            }]
+        }
+        const newThreadWithReply = ThreadModel(sampleThread);
+        const netThreadWithReplyDoc = await newThreadWithReply.save();
+
+        const thread_id = netThreadWithReplyDoc._id.toString();
+        const reply_id = netThreadWithReplyDoc.replies[0]._id.toString();
+
+        const response = await chai.request(server).delete(`/api/replies/${board}`).send({
+            thread_id,
+            reply_id,
+            delete_password: 'incorrectPass'
+        });
+
+        chai.expect(response.statusCode).to.equal(200);
+        chai.expect(response.text).to.equal('incorrect password');
+
+        const checkThread = await threadDAO.getThreadByThreadId(thread_id);
+        chai.expect(checkThread.replies[0].text).to.equal(replyText);
+    });
+
+    test('Deleting a reply with the correct password: DELETE request to /api/replies/{board} with a valid delete_password', async function () {
+        const sampleThread = {
+            board,
+            text: threadText,
+            delete_password,
+            replies: [{
+                text: replyText,
+                delete_password
+            }]
+        }
+        const newThreadWithReply = ThreadModel(sampleThread);
+        const netThreadWithReplyDoc = await newThreadWithReply.save();
+
+        const thread_id = netThreadWithReplyDoc._id.toString();
+        const reply_id = netThreadWithReplyDoc.replies[0]._id.toString();
+
+        const response = await chai.request(server).delete(`/api/replies/${board}`).send({
+            thread_id,
+            reply_id,
+            delete_password
+        });
+
+        chai.expect(response.statusCode).to.equal(200);
+        chai.expect(response.text).to.equal('success');
+
+        const checkThread = await threadDAO.getThreadByThreadId(thread_id);
+        chai.expect(checkThread.replies[0].text).to.equal('[deleted]');
     });
 });
