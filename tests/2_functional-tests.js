@@ -4,7 +4,6 @@ const assert = chai.assert;
 const server = require('../server');
 const ThreadDAO = require('../data/thread-data')
 const { ThreadModel } = require('../model/thread-schema');
-const fcctesting = require('../routes/fcctesting');
 
 chai.use(chaiHttp);
 
@@ -25,7 +24,7 @@ suite('Functional Tests', function () {
             text: threadText,
             delete_password
         });
-        chai.expect(response.statusCode).to.equal(200);
+        assert.equal(response.statusCode,200);
         const result = await threadDAO.getThreadByBoardTextAndDeletepassword(board, threadText, delete_password);
         chai.expect(result).to.have.property('board');
         chai.expect(result).to.have.property('_id');
@@ -44,7 +43,7 @@ suite('Functional Tests', function () {
     test('Viewing the 10 most recent threads with 3 replies each: GET request to /api/threads/{board}', async function () {
         const response = await chai.request(server).get(`/api/threads/${board}`);
 
-        chai.expect(response.statusCode).to.equal(200);
+        assert.equal(response.statusCode,200);
         assert.isArray(response.body);
         chai.expect(response.body).to.have.length.lessThan(11); // must contain only 10
         for (let i = 0; i < response.body.length; i++) {
@@ -76,7 +75,7 @@ suite('Functional Tests', function () {
             thread_id,
             delete_password: 'incorrectPass'
         });
-        chai.expect(response.statusCode).to.equal(200);
+        assert.equal(response.statusCode,200);
         chai.expect(response.text).to.equal('incorrect password');
 
         const checkThread = await threadDAO.getThreadByThreadId(thread_id);
@@ -92,7 +91,7 @@ suite('Functional Tests', function () {
             delete_password
         });
 
-        chai.expect(response.statusCode).to.equal(200);
+        assert.equal(response.statusCode,200);
         chai.expect(response.text).to.equal('success');
 
         const checkThread = await threadDAO.getThreadByThreadId(thread_id);
@@ -107,7 +106,7 @@ suite('Functional Tests', function () {
             thread_id
         });
 
-        chai.expect(response.statusCode).to.equal(200);
+        assert.equal(response.statusCode,200);
         chai.expect(response.text).to.equal('reported');
 
         const checkThread = await threadDAO.getThreadByThreadId(thread_id);
@@ -123,7 +122,7 @@ suite('Functional Tests', function () {
             delete_password
         });
 
-        chai.expect(response.statusCode).to.equal(200);
+        assert.equal(response.statusCode,200);
 
         const result = await threadDAO.getThreadByThreadId(oldThreatResult._id);
         chai.expect(result).to.have.property('board');
@@ -154,7 +153,7 @@ suite('Functional Tests', function () {
             thread_id,
         });
 
-        chai.expect(response.statusCode).to.equal(200);
+        assert.equal(response.statusCode,200);
         chai.expect(response.body).to.have.property('board');
         chai.expect(response.body).to.have.property('_id');
         chai.expect(response.body).to.have.property('created_on');
@@ -196,7 +195,7 @@ suite('Functional Tests', function () {
             delete_password: 'incorrectPass'
         });
 
-        chai.expect(response.statusCode).to.equal(200);
+        assert.equal(response.statusCode,200);
         chai.expect(response.text).to.equal('incorrect password');
 
         const checkThread = await threadDAO.getThreadByThreadId(thread_id);
@@ -225,7 +224,7 @@ suite('Functional Tests', function () {
             delete_password
         });
 
-        chai.expect(response.statusCode).to.equal(200);
+        assert.equal(response.statusCode,200);
         chai.expect(response.text).to.equal('success');
 
         const checkThread = await threadDAO.getThreadByThreadId(thread_id);
@@ -253,7 +252,7 @@ suite('Functional Tests', function () {
             reply_id
         });
         
-        chai.expect(response.statusCode).to.equal(200);
+        assert.equal(response.statusCode,200);
         chai.expect(response.text).to.equal('reported');
 
         const checkThread = await threadDAO.getThreadByThreadId(thread_id);
