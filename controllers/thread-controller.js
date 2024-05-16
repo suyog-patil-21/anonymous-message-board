@@ -51,8 +51,12 @@ const deleteThreadHandler = async (req, res) => {
 
 const reportThreadHandler = async (req, res) => {
     const { thread_id } = req.body;
-    // TODO : write code for report Thread
-
+    const result = await threadService.reportThreadById(thread_id);
+    console.log(result);
+    if (result == null || result == undefined) {
+        return res.status(500).send();
+    }
+    return res.status(200).send('reported');
 }
 
 module.exports = {

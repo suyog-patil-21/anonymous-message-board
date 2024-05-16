@@ -73,4 +73,16 @@ module.exports = class ThreadService {
             console.error(`Error in ThreadService deleteThreadById: ${err}`);
         }
     }
+
+    async reportThreadById(thread_id){
+        try {
+            const result = await this.threadDAO.updateThreadById(thread_id,{
+                reported : true
+            })
+            return result;
+        }
+        catch (err) {
+            console.error(`Error in ThreadService deleteThreadById: ${err}`);
+        }
+    }
 }
