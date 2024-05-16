@@ -49,9 +49,16 @@ const deleteThreadHandler = async (req, res) => {
     return res.status(200).send('incorrect password');
 }
 
+const reportThreadHandler = async (req, res) => {
+    const { thread_id } = req.body;
+    // TODO : write code for report Thread
+
+}
+
 module.exports = {
     createThreadHandler,
     getThreadsHandler,
     getThreadsWithAllRepliesHandler,
-    deleteThreadHandler
+    deleteThreadHandler,
+    reportThreadHandler
 };
