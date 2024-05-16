@@ -97,6 +97,21 @@ suite('Functional Tests', function () {
         chai.expect(checkThread).to.equal(null);
     });
 
+    test('Reporting a thread: PUT request to /api/threads/{board}',async function(){
+        const createThreadDoc = await threadDAO.createThread(board, 'Delete with correct password test', delete_password);
+        const thread_id = createThreadDoc._id.toString();
+
+        const response = (await chai.request(server).put(`/api/threads/${board}`)).send({
+            thread_id
+        });
+
+        chai.expect(response.statusCode).to.equal(200);
+        chai.expect(response.text).to.equal('reported');
+
+        const checkThread = await threadDAO.getThreadByThreadId(thread_id);
+        assert.isTrue(checkThread['reported']);
+    });
+
     test('Creating a new reply: POST request to /api/replies/{board}', async function () {
         const oldThreatResult = await threadDAO.getThreadByBoardTextAndDeletepassword(board, threadText, delete_password);
 
